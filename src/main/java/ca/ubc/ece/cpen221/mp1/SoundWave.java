@@ -11,7 +11,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     // as a constant.
     // The best way to refer to this constant is as
     // SoundWave.SAMPLES_PER_SECOND.
-    public static final int SAMPLES_PER_SECOND = 44100;
+    public static final double SAMPLES_PER_SECOND = 44100.0;
+    public static final double PI = 3.14159265358979;
 
     // some representation fields that you could use
     private ArrayList<Double> lchannel = new ArrayList<>();
@@ -27,12 +28,12 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param rchannel is not null and represents the right channel.
      */
     public SoundWave(double[] lchannel, double[] rchannel) {
-        // TODO: Implement this constructor
+        this.append(lchannel, rchannel);
     }
 
     public SoundWave() {
-        // TODO: You should implement a default constructor
-        // that creates an empty wave
+        this.lchannel = new ArrayList<>();
+        this.rchannel = new ArrayList<>();
     }
 
     /**
@@ -45,7 +46,13 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param duration  the duration of the sine wave, in seconds
      */
     public SoundWave(double freq, double phase, double amplitude, double duration) {
-        // TODO: Implement this constructor
+        double A = 0.0;
+
+        for(double t = 0.0; t < duration; t += 1.0/SAMPLES_PER_SECOND){
+            A = amplitude*Math.sin((2*PI)*freq*t + phase);
+            this.lchannel.add(A);
+            this.rchannel.add(A);
+        }
     }
 
     /**
@@ -83,7 +90,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      */
     public static void main(String[] args) {
         StdPlayer.open("mp3/anger.mp3");
-        SoundWave sw = new SoundWave();
+        SoundWave sw = new SoundWave(535.13, 0,  1,  10 );
         while (!StdPlayer.isEmpty()) {
             double[] lchannel = StdPlayer.getLeftChannel();
             double[] rchannel = StdPlayer.getRightChannel();
@@ -100,7 +107,10 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param rchannel
      */
     public void append(double[] lchannel, double[] rchannel) {
-        // TODO: Implement this method.
+        for(int i = 0; i < lchannel.length; i++){
+            this.lchannel.add(lchannel[i]);
+            this.rchannel.add(rchannel[i]);
+        }
     }
 
     /**
