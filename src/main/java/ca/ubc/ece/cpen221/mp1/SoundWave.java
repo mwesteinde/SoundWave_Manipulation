@@ -75,7 +75,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * A simple main method to play an MP3 file. Note that MP3 files should
      * be encoded to use stereo channels and not mono channels for the sound to
      * play out correctly.
-     * Testing out branching.
      * <p>
      * One should try to get this method to work correctly at the start.
      * </p>
