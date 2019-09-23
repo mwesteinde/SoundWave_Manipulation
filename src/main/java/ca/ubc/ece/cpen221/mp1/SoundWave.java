@@ -89,8 +89,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param args are currently ignored but you could be creative.
      */
     public static void main(String[] args) {
-        StdPlayer.open("mp3/late.mp3");
-        SoundWave sw = new SoundWave();
+        StdPlayer.open("mp3/anger.mp3");
+        SoundWave sw = new SoundWave(535.13, 0,  1,  10 );
         while (!StdPlayer.isEmpty()) {
             double[] lchannel = StdPlayer.getLeftChannel();
             double[] rchannel = StdPlayer.getRightChannel();
