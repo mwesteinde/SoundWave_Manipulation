@@ -62,8 +62,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @return an array that represents the left channel for this wave.
      */
     public double[] getLeftChannel() {
-        // TODO: Implement this
-        return null; // change this
+        double[] dlchannel = this.lchannel.toArray(new double[]);
+        return dlchannel; // change this
     }
 
     /**
@@ -73,8 +73,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @return an array that represents the right channel for this wave.
      */
     public double[] getRightChannel() {
-        // TODO: Implement this
-        return null; // change this
+        double[] drchannel = this.rchannel.toArray(double[]);
+        return drchannel; // change this
     }
 
 
@@ -90,7 +90,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      */
     public static void main(String[] args) {
         StdPlayer.open("mp3/late.mp3");
-        SoundWave sw = new SoundWave(535.13, 0,  1,  10 );
+        SoundWave sw = new SoundWave();
         while (!StdPlayer.isEmpty()) {
             double[] lchannel = StdPlayer.getLeftChannel();
             double[] rchannel = StdPlayer.getRightChannel();
@@ -119,7 +119,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param other the wave to append.
      */
     public void append(SoundWave other) {
-        // TODO: Implement this method.
+        for(int i = 0; i )
     }
 
     /**
