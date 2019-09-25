@@ -62,8 +62,12 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @return an array that represents the left channel for this wave.
      */
     public double[] getLeftChannel() {
-        double[] dlchannel = this.lchannel.toArray(new double[]);
-        return dlchannel; // change this
+        double[] dlchannel = new double[this.lchannel.size()];
+
+        for(int i = 0; i < this.lchannel.size(); i++){
+            dlchannel[i] = this.lchannel.get(i);
+        }
+        return dlchannel;
     }
 
     /**
@@ -73,8 +77,12 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @return an array that represents the right channel for this wave.
      */
     public double[] getRightChannel() {
-        double[] drchannel = this.rchannel.toArray(double[]);
-        return drchannel; // change this
+       double[] drchannel = new double[this.rchannel.size()];
+
+        for(int i = 0; i < this.rchannel.size(); i++){
+            drchannel[i] = this.rchannel.get(i);
+        }
+        return drchannel;
     }
 
 
@@ -89,15 +97,26 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param args are currently ignored but you could be creative.
      */
     public static void main(String[] args) {
-        StdPlayer.open("mp3/anger.mp3");
-        SoundWave sw = new SoundWave(535.13, 0,  1,  10 );
+        StdPlayer.open();
+        /**SoundWave sw = new SoundWave();
+        SoundWave fw = new SoundWave(543, 0, 1, 10);
         while (!StdPlayer.isEmpty()) {
             double[] lchannel = StdPlayer.getLeftChannel();
             double[] rchannel = StdPlayer.getRightChannel();
             sw.append(lchannel, rchannel);
         }
-        sw.sendToStereoSpeaker();
+         **/
+        SoundWave c = new SoundWave(246.94, 0, 1, 10);
+        SoundWave g = new SoundWave( 293.665, 0, 1, 10);
+        SoundWave e = new SoundWave(329.63, 0, 0.5, 10);
+        SoundWave merge = new SoundWave();
+         merge = c.add(g);
+         merge = merge.add(e);
+
+        merge.sendToStereoSpeaker();
         StdPlayer.close();
+
+
     }
 
     /**
@@ -119,7 +138,10 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param other the wave to append.
      */
     public void append(SoundWave other) {
-        for(int i = 0; i )
+        for(int i = 0; i < lchannel.size(); i++){
+            this.lchannel.add(other.lchannel.get(i));
+            this.rchannel.add(other.rchannel.get(i));
+        }
     }
 
     /**
@@ -127,8 +149,39 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * (You should also write clear specifications for this method.)
      */
     public SoundWave add(SoundWave other) {
-        // TODO: Implement this method
-        return null; // change this
+        SoundWave merge = new SoundWave();
+        double sl1 = 0.0;
+        double sr1 = 0.0;
+        double sl2 = 0.0;
+        double sr2 = 0.0;
+        double left;
+        double right;
+
+        for(int i = 0; i < other.lchannel.size(); i++){
+            sl1 = this.lchannel.get(i);
+            sr1 = this.rchannel.get(i);
+            sl2 = other.lchannel.get(i);
+            sr2 = other.rchannel.get(i);
+            left = sl1+sl2;
+            right = sr2+sr1;
+
+            left = Trim(left);
+            right = Trim(right);
+
+            merge.lchannel.add(left);
+            merge.rchannel.add(right);
+
+        }
+        return merge; // change this
+    }
+
+    public double Trim(double left){
+        if(left > 1)
+            left = 1;
+        if(left < -1)
+            left = -1;
+
+        return left;
     }
 
     /**
