@@ -106,9 +106,9 @@ public class SoundWave implements HasSimilarity<SoundWave> {
             sw.append(lchannel, rchannel);
         }
          **/
-        SoundWave c = new SoundWave(246.94, 0, 1, 10);
-        SoundWave g = new SoundWave( 293.665, 0, 1, 10);
-        SoundWave e = new SoundWave(329.63, 0, 0.5, 10);
+        SoundWave c = new SoundWave(200, 0, 1, 10);
+        SoundWave g = new SoundWave( 300, 0, 1, 5);
+        SoundWave e = new SoundWave(400, 0, 1, 5);
         SoundWave merge = new SoundWave();
          merge = c.add(g);
          merge = merge.add(e);
@@ -204,7 +204,26 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param scalingFactor is a value > 0.
      */
     public void scale(double scalingFactor) {
-        // TODO: Implement this method.
+        double left;
+        double right;
+        ArrayList nlchannel = new ArrayList<>();
+        ArrayList nrchannel = new ArrayList<>();
+
+       for(int i = 0; i < this.lchannel.size(); i++){
+           left = this.lchannel.get(i) * scalingFactor;
+           right = this.rchannel.get(i) * scalingFactor;
+
+           left = Trim(left);
+           right = Trim(right);
+
+           nlchannel.add(left);
+           nrchannel.add(right);
+       }
+
+       this.lchannel.clear();
+       this.rchannel.clear();
+       this.lchannel = nlchannel;
+       this.rchannel = nrchannel;
     }
 
     /**
