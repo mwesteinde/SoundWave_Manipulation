@@ -204,7 +204,26 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param scalingFactor is a value > 0.
      */
     public void scale(double scalingFactor) {
-        // TODO: Implement this method.
+        double left;
+        double right;
+        ArrayList nlchannel = new ArrayList<>();
+        ArrayList nrchannel = new ArrayList<>();
+
+        for(int i = 0; i < this.lchannel.size(); i++){
+            left = this.lchannel.get(i) * scalingFactor;
+            right = this.rchannel.get(i) * scalingFactor;
+
+            left = Trim(left);
+            right = Trim(right);
+
+            nlchannel.add(left);
+            nrchannel.add(right);
+        }
+
+        this.lchannel.clear();
+        this.rchannel.clear();
+        this.lchannel = nlchannel;
+        this.rchannel = nrchannel;
     }
 
     /**
