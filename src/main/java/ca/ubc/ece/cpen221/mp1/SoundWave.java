@@ -19,6 +19,12 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     private ArrayList<Double> rchannel = new ArrayList<>();
     private int samples = 0;
 
+
+
+    public ComplexNumber(double rval, double ival){
+        double r = rval;
+        double i = ival;
+    }
     /**
      * Create a new SoundWave using the provided left and right channel
      * amplitude values. After the SoundWave is created, changes to the
@@ -298,8 +304,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
 
         for(int i = 0; i < this.lchannel.size(); i++){
             if(i == 0){
-                filtered.lchannel.add(a * (this.lchannel.get(i)));
-                filtered.rchannel.add(a * (this.rchannel.get(i)));
+                filtered.lchannel.add((this.lchannel.get(i)));
+                filtered.rchannel.add((this.rchannel.get(i)));
             }
             else{
                filtered.lchannel.add(a * filtered.lchannel.get(i - 1) + a * (this.lchannel.get(i) - this.lchannel.get(i - 1)));
@@ -320,9 +326,37 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * return the higher frequency.
      */
     public double highAmplitudeFreqComponent() {
-        // TODO: Implement this method
+        double sum, left, right, csum, reall, imagl, realr, imagr, bval
+        ComplexNumber ltotc = new ComplexNumber(0.0, 0.0);
+        ComplexNumber rtotc = new ComplexNumber(0.0, 0.0);
+
+        for(int j = 0; j < this.lchannel.size(); j++) {
+            for (int i = 0; i < this.lchannel.size(); i++) {
+                bval = (2*PI*i*j)/this.lchannel.size();
+
+                reall = this.lchannel.get(j) * Math.cos(bval);
+                imagl = this.lchannel.get(j) * Math.sin(bval);
+                realr = this.rchannel.get(j) * Math.cos(bval);
+                imagr = this.rchannel.get(j) * Math.sin(bval);
+
+                ComplexNumber leftC = new ComplexNumber(reall, imagl);
+                ComplexNumber rightC = new ComplexNumber(realr, imagr);
+
+                ltotc = leftC.Sum(ltotc);
+                rtotc = rightC.Sum(rtotc);
+            }
+
+
+        }
+
+
         return -1; // change this
     }
+
+
+
+
+
 
     /**
      * Determine if this wave fully contains the other sound wave as a pattern.
