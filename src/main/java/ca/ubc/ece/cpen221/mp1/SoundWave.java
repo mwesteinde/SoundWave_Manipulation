@@ -107,7 +107,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
 
          /*StdPlayer.open("mp3/late.mp3");
          SoundWave sw = new SoundWave();
-
         SoundWave fw = new SoundWave(543, 0, 1, 10);
         while (!StdPlayer.isEmpty()) {
             double[] lchannel = StdPlayer.getLeftChannel();

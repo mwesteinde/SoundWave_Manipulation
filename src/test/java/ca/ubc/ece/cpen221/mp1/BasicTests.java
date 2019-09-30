@@ -93,5 +93,17 @@ public class BasicTests {
         Assert.assertArrayEquals(a.getRightChannel(), rchannelresult, 0.00001);
     }
 
+        @Test
+    public void testHighPassFilter() {
+        double[] lchannelo1 = {0.03, -0.3, 0.395, 0.5, -0.5, -0.0005, 0};
+        double[] rchannelo1 = {0.05, 0.7, 0.1, -0.02, 0.5, 1, 0.08};
+        double[] lchannelresult = {0.03, -0.13333333333, 0.2496296, 0.1576131556, -.37439415, 0.0556025, 0.0249344884};
+        double[] rchannelresult = {0.05, -0.12444444, 0.2335802, 0.0504801, 0.2535467, 0.3349096488, -.2600401561};
+        SoundWave a = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave b = a.highPassFilter(5, 4.0);
+        Assert.assertArrayEquals(b.getLeftChannel(), lchannelresult, 0.00001);
+        Assert.assertArrayEquals(b.getRightChannel(), rchannelresult, 0.00001);
+    }
+
 
 }
