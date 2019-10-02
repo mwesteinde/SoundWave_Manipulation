@@ -20,11 +20,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     private int samples = 0;
 
 
-
-    public ComplexNumber(double rval, double ival){
-        double r = rval;
-        double i = ival;
-    }
     /**
      * Create a new SoundWave using the provided left and right channel
      * amplitude values. After the SoundWave is created, changes to the
@@ -239,6 +234,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         double echoright;
         ArrayList echolchannel = new ArrayList<>();
         ArrayList echorchannel = new ArrayList<>();
+
         for (int i = 0; i < this.lchannel.size(); i++) {
             if (i < delta) {
                 echoleft = this.lchannel.get(i);
@@ -325,11 +321,13 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * return the higher frequency.
      */
     public double highAmplitudeFreqComponent() {
-        double sum, left, right, csum, reall, imagl, realr, imagr, bval
+        double freqmax, right, csum, reall, imagl, realr, imagr, bval, magnitudel, magnituder;
+        double max = 0;
+        double indexmax = 0;
         ComplexNumber ltotc = new ComplexNumber(0.0, 0.0);
         ComplexNumber rtotc = new ComplexNumber(0.0, 0.0);
 
-        for(int j = 0; j < this.lchannel.size(); j++) {
+        for(int j = 0; j < SAMPLES_PER_SECOND/2; j++) {
             for (int i = 0; i < this.lchannel.size(); i++) {
                 bval = (2*PI*i*j)/this.lchannel.size();
 
@@ -344,18 +342,20 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                 ltotc = leftC.Sum(ltotc);
                 rtotc = rightC.Sum(rtotc);
             }
-
-
+            magnitudel = ltotc.Magnitude();
+            magnituder = rtotc.Magnitude();
+            if (magnitudel > max){
+                max = magnitudel;
+                indexmax = j;
+            }
+            if (magnituder > max){
+                max = magnituder;
+                indexmax = j;
+            }
         }
-
-
-        return -1; // change this
+        freqmax = indexmax*(SAMPLES_PER_SECOND/(SAMPLES_PER_SECOND/2));
+        return freqmax; // change this
     }
-
-
-
-
-
 
     /**
      * Determine if this wave fully contains the other sound wave as a pattern.
@@ -366,8 +366,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * possible amplitude scaling.
      */
     public boolean contains(SoundWave other) {
-        // TODO: Implement this method
-        return true; // change this
+
+        return true;
     }
 
     /**
