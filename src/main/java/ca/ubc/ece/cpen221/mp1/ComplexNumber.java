@@ -33,4 +33,5 @@ public class ComplexNumber {
         double result = Math.sqrt(Math.pow(this.ival, 2) + Math.pow(this.rval, 2));
         return result;
     }
+
 }
