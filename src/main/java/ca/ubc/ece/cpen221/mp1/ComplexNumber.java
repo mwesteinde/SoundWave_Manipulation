@@ -16,7 +16,6 @@ public class ComplexNumber {
 
     /**
      * @param C1 Complex num 1
-     * @param C2 Complex num 2
      * @return the Sum of the real and imaginary components in a new complex number.
      */
     public ComplexNumber Sum(ComplexNumber C1){
@@ -28,11 +27,11 @@ public class ComplexNumber {
     }
 
     /**
-     * @param C1 complex number 1
      * @return the magnitude of the real and imaginary components together.
      */
-    public double Magnitude(ComplexNumber C1){
-        double result = Math.sqrt(Math.pow(C1.ival, 2) + Math.pow(C1.rval, 2));
+    public double Magnitude(){
+        double result = Math.sqrt(Math.pow(this.ival, 2) + Math.pow(this.rval, 2));
         return result;
     }
+
 }
