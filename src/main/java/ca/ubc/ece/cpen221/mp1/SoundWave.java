@@ -20,11 +20,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     private int samples = 0;
 
 
-
-    public ComplexNumber(double rval, double ival){
-        double r = rval;
-        double i = ival;
-    }
     /**
      * Create a new SoundWave using the provided left and right channel
      * amplitude values. After the SoundWave is created, changes to the
@@ -38,8 +33,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     }
 
     public SoundWave() {
-        this.lchannel = new ArrayList<>();
-        this.rchannel = new ArrayList<>();
+        lchannel = new ArrayList<>();
+        rchannel = new ArrayList<>();
     }
 
     /**
@@ -54,7 +49,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     public SoundWave(double freq, double phase, double amplitude, double duration) {
         double A = 0.0;
 
-        for(double t = 0.0; t < duration; t += 1.0/SAMPLES_PER_SECOND){
+        for(double t = 0.0; t < duration; t += 1.0/SAMPLES_PER_SECOND) {
             A = amplitude*Math.sin((2*PI)*freq*t + phase);
             this.lchannel.add(A);
             this.rchannel.add(A);
@@ -70,7 +65,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     public double[] getLeftChannel() {
         double[] dlchannel = new double[this.lchannel.size()];
 
-        for(int i = 0; i < this.lchannel.size(); i++){
+        for(int i = 0; i < this.lchannel.size(); i++) {
             dlchannel[i] = this.lchannel.get(i);
         }
         return dlchannel;
@@ -104,27 +99,38 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      */
     public static void main(String[] args) {
         StdPlayer.open();
-        /**SoundWave sw = new SoundWave();
+
+         /*StdPlayer.open("mp3/late.mp3");
+         SoundWave sw = new SoundWave();
         SoundWave fw = new SoundWave(543, 0, 1, 10);
         while (!StdPlayer.isEmpty()) {
             double[] lchannel = StdPlayer.getLeftChannel();
             double[] rchannel = StdPlayer.getRightChannel();
             sw.append(lchannel, rchannel);
-        }
-         **/
-        SoundWave c = new SoundWave(2000, 0, 1, 5);
-        SoundWave g = new SoundWave( 2000, 0, 1, 5);
-        SoundWave e = new SoundWave(2000, 0, 0.5, 5);
-        SoundWave f = new SoundWave(2000, 0, 0.5, 5);
-        SoundWave merge = new SoundWave();
-         merge = c.add(g);
-         merge = merge.add(e);
-         merge = merge.add(f);
+        }*/
+        StdPlayer.open();
+        SoundWave a = new SoundWave(200, 0, 1, .5);
+        SoundWave b = new SoundWave( 758, 0, 1, .5);
+        SoundWave c = new SoundWave(500, 0, 1, .5);
+        SoundWave d = new SoundWave(100, 0, 1, .5);
+        SoundWave e = new SoundWave(800, 0, 1, .5);
+        SoundWave f = new SoundWave(102, 0, 1, .5);
+        SoundWave g = new SoundWave(50, 0, 1, .5);
 
-         merge = merge.highPassFilter(6, 5);
+        SoundWave merge = new SoundWave();
+        SoundWave echo = new SoundWave();
+         merge = a.add(b);
+         merge = merge.add(c);
+        merge = merge.add(d);
+        merge = merge.add(e);
+        merge = merge.add(f);
+        merge = merge.add(g);
+
+
+      //   echo = merge.addEcho(40000, 0.5);
         merge.sendToStereoSpeaker();
         StdPlayer.close();
-
+        System.out.println(merge.highAmplitudeFreqComponent());
 
     }
 
@@ -135,7 +141,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param rchannel
      */
     public void append(double[] lchannel, double[] rchannel) {
-        for(int i = 0; i < lchannel.length; i++){
+        for(int i = 0; i < lchannel.length; i++) {
             this.lchannel.add(lchannel[i]);
             this.rchannel.add(rchannel[i]);
         }
@@ -147,7 +153,14 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param other the wave to append.
      */
     public void append(SoundWave other) {
-        for(int i = 0; i < lchannel.size(); i++){
+        int length;
+        if (this.lchannel.size() > other.lchannel.size()) {
+            length = other.lchannel.size();
+        }
+        else {
+            length = this.lchannel.size();
+        }
+        for(int i = 0; i < length; i++) {
             this.lchannel.add(other.lchannel.get(i));
             this.rchannel.add(other.rchannel.get(i));
         }
@@ -209,7 +222,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         return merge; // change this
     }
 
-    public double Trim(double left){
+    public double Trim(double left) {
         if(left > 1)
             left = 1;
         if(left < -1)
@@ -222,13 +235,33 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * Create a new wave by adding an echo to this wave.
      *
      * @param delta > 0. delta is the lag between this wave and the echo wave.
-     * @param alpha > 0. alpha is the damping factor applied to the echo wave.
+     * @param alpha <= 1, alpha > 0. alpha is the damping factor applied to the echo wave.
      * @return a new sound wave with an echo.
      */
     public SoundWave addEcho(int delta, double alpha) {
-        // TODO: Implement this method
-        return null; // change this
+        SoundWave echo = new SoundWave();
+        double echoleft;
+        double echoright;
+        ArrayList echolchannel = new ArrayList<>();
+        ArrayList echorchannel = new ArrayList<>();
+
+        for (int i = 0; i < this.lchannel.size(); i++) {
+            if (i < delta) {
+                echoleft = this.lchannel.get(i);
+                echoright = this.rchannel.get(i);
+            }
+            else {
+                echoleft = this.lchannel.get(i) + this.lchannel.get(i - delta) * alpha;
+                echoright = this.rchannel.get(i) + this.rchannel.get(i - delta) * alpha;
+            }
+            echoleft = Trim(echoleft);
+            echoright = Trim(echoright);
+            echo.lchannel.add(echoleft);
+            echo.rchannel.add(echoright);
+        }
+        return echo;
     }
+
 
     /**
      * Scale the amplitude of this wave by a scaling factor.
@@ -243,21 +276,21 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         ArrayList nlchannel = new ArrayList<>();
         ArrayList nrchannel = new ArrayList<>();
 
-        for(int i = 0; i < this.lchannel.size(); i++){
-            left = this.lchannel.get(i) * scalingFactor;
-            right = this.rchannel.get(i) * scalingFactor;
+       for(int i = 0; i < this.lchannel.size(); i++){
+           left = this.lchannel.get(i) * scalingFactor;
+           right = this.rchannel.get(i) * scalingFactor;
 
-            left = Trim(left);
-            right = Trim(right);
+           left = Trim(left);
+           right = Trim(right);
 
-            nlchannel.add(left);
-            nrchannel.add(right);
-        }
+           nlchannel.add(left);
+           nrchannel.add(right);
+       }
 
-        this.lchannel.clear();
-        this.rchannel.clear();
-        this.lchannel = nlchannel;
-        this.rchannel = nrchannel;
+       this.lchannel.clear();
+       this.rchannel.clear();
+       this.lchannel = nlchannel;
+       this.rchannel = nrchannel;
     }
 
     /**
@@ -298,11 +331,13 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * return the higher frequency.
      */
     public double highAmplitudeFreqComponent() {
-        double sum, left, right, csum, reall, imagl, realr, imagr, bval
+        double freqmax, reall, imagl, realr, imagr, bval, magnitudel, magnituder;
+        double max = 0;
+        double indexmax = 0;
         ComplexNumber ltotc = new ComplexNumber(0.0, 0.0);
         ComplexNumber rtotc = new ComplexNumber(0.0, 0.0);
 
-        for(int j = 0; j < this.lchannel.size(); j++) {
+        for(int j = 0; j < this.lchannel.size()/2; j++) {
             for (int i = 0; i < this.lchannel.size(); i++) {
                 bval = (2*PI*i*j)/this.lchannel.size();
 
@@ -317,18 +352,20 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                 ltotc = leftC.Sum(ltotc);
                 rtotc = rightC.Sum(rtotc);
             }
-
-
+            magnitudel = ltotc.Magnitude();
+            magnituder = rtotc.Magnitude();
+            if (magnitudel > max){
+                max = magnitudel;
+                indexmax = j;
+            }
+            if (magnituder > max){
+                max = magnituder;
+                indexmax = j;
+            }
         }
-
-
-        return -1; // change this
+        freqmax = indexmax*(SAMPLES_PER_SECOND/(this.lchannel.size()));
+        return freqmax;
     }
-
-
-
-
-
 
     /**
      * Determine if this wave fully contains the other sound wave as a pattern.
@@ -339,8 +376,88 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * possible amplitude scaling.
      */
     public boolean contains(SoundWave other) {
-        // TODO: Implement this method
-        return true; // change this
+       double betal;
+       int sum = 0;
+
+       for(int i=0; i<=this.lchannel.size()-other.lchannel.size(); i++){
+           SoundWave scaled = new SoundWave(other.getLeftChannel(), other.getRightChannel());
+
+           if(other.lchannel.get(0) == 0 || other.rchannel.get(0) == 0) {
+               betal = this.betaZeroChecker(other);
+           }
+           else{
+               betal = this.lchannel.get(i) / other.lchannel.get(0);
+               scaled.scale(betal);
+           }
+
+           for(int j=0; j < other.lchannel.size(); j++){
+               double l = this.lchannel.get(i+j);
+               double r = this.rchannel.get(i+j);
+
+               if (betal > 0 && l == (other.lchannel.get(j)) && r == (other.rchannel.get(j))) {
+                   sum++;
+               }
+                else {
+                    sum = 0;
+                    break;
+                }
+               if(sum == other.lchannel.size()){
+                   return true;
+               }
+           }
+       }
+        return false;
+    }
+
+    private double betaZeroChecker(SoundWave other){
+        double betal;
+        int firstNonZeroIInner = 0;
+        int firstNonZeroIOuter = 0;
+        boolean sentinel = false;
+        boolean rvalouter = false;
+        boolean lvalouter = false;
+        boolean rvaloinner = false;
+        boolean lvalinner = false;
+
+
+            for(int w = 0; w < this.lchannel.size(); w++){
+                for(int x=0;x< other.lchannel.size();x++) {
+                    if (other.rchannel.get(x) != 0) {
+                        firstNonZeroIInner = x;
+                        rvaloinner = true;
+                        sentinel = true;
+                        break;
+                    }
+                    else if (other.lchannel.get(x) != 0 || other.rchannel.get(x) != 0) {
+                        firstNonZeroIInner = x;
+                        lvalinner = true;
+                        sentinel = true;
+                        break;
+                    }
+                }
+                if((this.rchannel.get(w) != 0) && sentinel) {
+                    firstNonZeroIOuter = w;
+                    rvalouter = true;
+                    break;
+                }
+                else if((this.lchannel.get(w) != 0 && sentinel) {
+                    firstNonZeroIOuter = w;
+                    lvalouter = true;
+                    break;
+                }
+
+            }
+            if(firstNonZeroIInner == 0){
+                betal = 1.0;
+                return betal;
+            }
+            else {
+                // LISTEN UP
+                // Your options are as follows: create 4 if statements that cover all combinations of rchannel lchanne;
+                // and subsiquently calculate beta using those values.
+                //                      OR
+                // figure out a simpler way of doing it and erase all this shit
+            }
     }
 
     /**
@@ -352,7 +469,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @return the similarity between this wave and other.
      */
     public double similarity(SoundWave other) {
-        // TODO: Implement this method
+
+
         return -1;
     }
 
