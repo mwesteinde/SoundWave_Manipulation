@@ -24,7 +24,7 @@ public class BasicTests {
         double[] lchannele = {1.0, 1.0, -.5, 1.0, 0.36};
         double[] rchannele = {1.0, 1.0, 1.0, 1.0, -0.4};
         SoundWave wave = new SoundWave(lchannelo, rchannelo);
-        SoundWave testecho = wave.addEcho(2,0.5);
+        SoundWave testecho = wave.addEcho(2, 0.5);
         Assert.assertArrayEquals(lchannele, testecho.getLeftChannel(), 0.00001);
         Assert.assertArrayEquals(rchannele, testecho.getRightChannel(), 0.00001);
     }
@@ -37,11 +37,11 @@ public class BasicTests {
         double[] rchannelo2 = {0.05, 56.2, 0.1, -0.02, 0.5, 1};
         double[] lchannelo3 = {-57.2, 0.65, 0.05, 0.05, -0.8, -1, 0.6};
         double[] rchannelo3 = {0.05, 0.7, 0.1, -0.02, 0.5, 1, 0.08};
-        double[] lchannelresult = {-0.2, 1, 0.6, 0.05, -1, -1, 1};
-        double[] rchannelresult = {0.15, 0.7, 0.3, 0.08, 1, -1, 0.06};
+        double[] lchannelresult = {-1, 1, 0.6, 0.05, -1, -1, 1};
+        double[] rchannelresult = {0.15, 0.7, 0.3, -.06, 1, 1, 0.06};
         SoundWave a = new SoundWave(lchannelo1, rchannelo1);
         SoundWave b = new SoundWave(lchannelo2, rchannelo2);
-        SoundWave c = new SoundWave(lchannelo3,rchannelo3);
+        SoundWave c = new SoundWave(lchannelo3, rchannelo3);
         SoundWave merge = a.add(b);
         merge = merge.add(c);
         double[] lchannelfinal = merge.getLeftChannel();
@@ -62,7 +62,7 @@ public class BasicTests {
         double[] rchannelresult = {0.05, -56.2, 0.1, -0.02, 0.5, 1, -0.02, 0.05, 56.2, 0.1, -0.02, 0.5, 1, 0.05, 0.7, 0.1, -0.02, 0.5, 1, 0.08};
         SoundWave a = new SoundWave(lchannelo1, rchannelo1);
         SoundWave b = new SoundWave(lchannelo2, rchannelo2);
-        SoundWave c = new SoundWave(lchannelo3,rchannelo3);
+        SoundWave c = new SoundWave(lchannelo3, rchannelo3);
         a.append(b);
         a.append(c);
         Assert.assertArrayEquals(a.getLeftChannel(), lchannelresult, 0.00001);
@@ -93,16 +93,63 @@ public class BasicTests {
         Assert.assertArrayEquals(a.getRightChannel(), rchannelresult, 0.00001);
     }
 
-        @Test
+    @Test
     public void testHighPassFilter() {
         double[] lchannelo1 = {0.03, -0.3, 0.395, 0.5, -0.5, -0.0005, 0};
         double[] rchannelo1 = {0.05, 0.7, 0.1, -0.02, 0.5, 1, 0.08};
         double[] lchannelresult = {0.03, -0.13333333333, 0.2496296, 0.1576131556, -.37439415, 0.0556025, 0.0249344884};
-        double[] rchannelresult = {0.05, -0.12444444, 0.2335802, 0.0504801, 0.2535467, 0.3349096488, -.2600401561};
+        double[] rchannelresult = {0.05, 0.3111111111, -0.12839, -0.110397805, 0.1820454199055022, 0.303131297, -0.274163867672987};
         SoundWave a = new SoundWave(lchannelo1, rchannelo1);
         SoundWave b = a.highPassFilter(5, 4.0);
-        Assert.assertArrayEquals(b.getLeftChannel(), lchannelresult, 0.00001);
-        Assert.assertArrayEquals(b.getRightChannel(), rchannelresult, 0.00001);
+        Assert.assertArrayEquals(lchannelresult, b.getLeftChannel(), 0.00001);
+        Assert.assertArrayEquals(rchannelresult, b.getRightChannel(), 0.00001);
+    }
+
+    @Test
+    public void testHighAmplitudeFreqComponent1() {
+        SoundWave a = new SoundWave(200, 0, .5, .5);
+        SoundWave b = new SoundWave(758, 0, 0.5, .5);
+        SoundWave d = new SoundWave(300, 0, 0.5, .5);
+        SoundWave c = new SoundWave(100, 0, 0.5, .5);
+        SoundWave e = new SoundWave(48, 5, 0.9, .5);
+        SoundWave f = new SoundWave(102, 10, 0.9, .5);
+        SoundWave g = new SoundWave(50, 0, 0.5, .5);
+        SoundWave merge = new SoundWave();
+        /**merge = a.add(b);
+         merge = merge.add(c);*/
+        merge = merge.add(d);
+        merge = merge.add(e);
+        merge = merge.add(f);
+        merge = merge.add(g);
+        double frequency = merge.highAmplitudeFreqComponent();
+        assertEquals(102, frequency, 1);
+    }
+
+    @Test
+    public void testMagnitude() {
+        double i = 6574.6;
+        double r = 85.6;
+        ComplexNumber test = new ComplexNumber(r, i);
+        double result = test.Magnitude();
+        assertEquals(result, 6575.15722, 0.1);
+    }
+
+    @Test
+    public void testSum() {
+        double i1 = 6574.6;
+        double r1 = 85.6;
+        double i2 = 345.5;
+        double r2 = 23445.5;
+        double resulti = 6920.1;
+        double resultr = 23531.1;
+
+        ComplexNumber test1 = new ComplexNumber(r1, i1);
+        ComplexNumber test2 = new ComplexNumber(r2, i2);
+        ComplexNumber result = new ComplexNumber(resulti, resultr);
+        ComplexNumber actual = test1.Sum(test2);
+
+        assertEquals(actual.ival, resulti, 0.01);
+        assertEquals(actual.rval, resultr, 0.01);
     }
 
 

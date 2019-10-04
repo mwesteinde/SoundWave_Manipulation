@@ -4,6 +4,7 @@ import ca.ubc.ece.cpen221.mp1.utils.HasSimilarity;
 import javazoom.jl.player.StdPlayer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SoundWave implements HasSimilarity<SoundWave> {
 
@@ -11,8 +12,9 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     // as a constant.
     // The best way to refer to this constant is as
     // SoundWave.SAMPLES_PER_SECOND.
-    public static final double SAMPLES_PER_SECOND = 44100.0;
-    public static final double PI = 3.14159265358979;
+    private static final double SAMPLES_PER_SECOND = 44100.0;
+    private static final double PI = 3.14159265358979;
+    private static final double NYQUIST_LIMIT = SAMPLES_PER_SECOND/2.0;
 
     // some representation fields that you could use
     private ArrayList<Double> lchannel = new ArrayList<>();
@@ -130,7 +132,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param lchannel
      * @param rchannel
      */
-    public void append(double[] lchannel, double[] rchannel) {
+    private void append(double[] lchannel, double[] rchannel) {
         for(int i = 0; i < lchannel.length; i++) {
             this.lchannel.add(lchannel[i]);
             this.rchannel.add(rchannel[i]);
@@ -212,7 +214,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         return merge; // change this
     }
 
-    public double Trim(double left) {
+    private double Trim(double left) {
         if(left > 1)
             left = 1;
         if(left < -1)
@@ -297,7 +299,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         double l;
         double r;
 
-        for(int i = 0; i < this.lchannel.size(); i++){
+        for(int i = 0; i < this.lchannel.size()/2; i++){
             if(i == 0){
                 filtered.lchannel.add((this.lchannel.get(i)));
                 filtered.rchannel.add((this.rchannel.get(i)));
@@ -321,40 +323,57 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * return the higher frequency.
      */
     public double highAmplitudeFreqComponent() {
-        double freqmax, right, csum, reall, imagl, realr, imagr, bval, magnitudel, magnituder;
+        double freqmax, reall, imagl, realr, imagr, bval, magnitudel, magnituder;
         double max = 0;
         double indexmax = 0;
-        ComplexNumber ltotc = new ComplexNumber(0.0, 0.0);
-        ComplexNumber rtotc = new ComplexNumber(0.0, 0.0);
+        ArrayList<Integer> maxes= new ArrayList<>();
 
-        for(int j = 0; j < SAMPLES_PER_SECOND/2; j++) {
+
+        for(int j = 0; j < this.lchannel.size()/2; j++) {
+            ComplexNumber ltotc = new ComplexNumber(0.0, 0.0);
+            ComplexNumber rtotc = new ComplexNumber(0.0, 0.0);
             for (int i = 0; i < this.lchannel.size(); i++) {
-                bval = (2*PI*i*j)/this.lchannel.size();
+                bval = -((2*Math.PI*i*j)/(this.lchannel.size()));
 
-                reall = this.lchannel.get(j) * Math.cos(bval);
-                imagl = this.lchannel.get(j) * Math.sin(bval);
-                realr = this.rchannel.get(j) * Math.cos(bval);
-                imagr = this.rchannel.get(j) * Math.sin(bval);
+                reall = this.lchannel.get(i) * Math.cos(bval);
+                imagl = this.lchannel.get(i) * Math.sin(bval);
+                realr = this.rchannel.get(i) * Math.cos(bval);
+                imagr = this.rchannel.get(i) * Math.sin(bval);
 
                 ComplexNumber leftC = new ComplexNumber(reall, imagl);
                 ComplexNumber rightC = new ComplexNumber(realr, imagr);
 
-                ltotc = leftC.Sum(ltotc);
-                rtotc = rightC.Sum(rtotc);
+                ltotc = ltotc.Sum(leftC);
+                rtotc = rtotc.Sum(rightC);
             }
             magnitudel = ltotc.Magnitude();
             magnituder = rtotc.Magnitude();
-            if (magnitudel > max){
-                max = magnitudel;
-                indexmax = j;
+
+            if (magnitudel >= (max-0.01)){
+                if (j *(SAMPLES_PER_SECOND/(this.lchannel.size())) < NYQUIST_LIMIT) {
+                    max = magnitudel;
+                    indexmax = j;
+                    maxes.add(j);
+                }
+
+                else {
+                    break;
+                }
             }
-            if (magnituder > max){
-                max = magnituder;
-                indexmax = j;
+            if (magnituder >= (max-0.01)){
+                if (j *(SAMPLES_PER_SECOND/(this.lchannel.size())) < NYQUIST_LIMIT) {
+                    max = magnituder;
+                    indexmax = j;
+                    maxes.add(j);
+                }
+                else {
+                    break;
+                }
             }
         }
-        freqmax = indexmax*(SAMPLES_PER_SECOND/(SAMPLES_PER_SECOND/2));
-        return freqmax; // change this
+        indexmax = Collections.max(maxes);
+        freqmax = indexmax*(SAMPLES_PER_SECOND/(this.lchannel.size()));
+        return freqmax;
     }
 
     /**
@@ -386,7 +405,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     /**
      * Play this wave on the standard stereo device.
      */
-    public void sendToStereoSpeaker() {
+    private void sendToStereoSpeaker() {
         // You may not need to change this...
         double[] lchannel = this.lchannel.stream().mapToDouble(x -> x.doubleValue()).toArray();
         double[] rchannel = this.rchannel.stream().mapToDouble(x -> x.doubleValue()).toArray();
