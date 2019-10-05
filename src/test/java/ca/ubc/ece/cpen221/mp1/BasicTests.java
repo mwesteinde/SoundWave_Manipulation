@@ -174,11 +174,11 @@ public class BasicTests {
     public void testHighAmplitudeFreqComponent1() {
         SoundWave a = new SoundWave(200, 0, .5, .5);
         SoundWave b = new SoundWave(758, 0, 0.5, .5);
-        SoundWave d = new SoundWave(300, 0, 0.5, .5);
+        SoundWave d = new SoundWave(500, 0, 0.9, .5);
         SoundWave c = new SoundWave(100, 0, 0.5, .5);
-        SoundWave e = new SoundWave(48, 5, 0.9, .5);
-        SoundWave f = new SoundWave(102, 10, 0.9, .5);
-        SoundWave g = new SoundWave(50, 0, 0.5, .5);
+        SoundWave e = new SoundWave(80, 0, 0.5, .5);
+        SoundWave f = new SoundWave(90, 0, 0.7, .5);
+        SoundWave g = new SoundWave(50, 0, 0.89, .5);
         SoundWave merge = new SoundWave();
         /**merge = a.add(b);
          merge = merge.add(c);*/
@@ -187,7 +187,7 @@ public class BasicTests {
         merge = merge.add(f);
         merge = merge.add(g);
         double frequency = merge.highAmplitudeFreqComponent();
-        assertEquals(102, frequency, 1);
+        assertEquals(300, frequency, 1);
     }
 
     @Test
@@ -215,6 +215,31 @@ public class BasicTests {
 
         assertEquals(actual.ival, resulti, 0.01);
         assertEquals(actual.rval, resultr, 0.01);
+    }
+
+    @Test
+    public void testSimilarity1() {
+        SoundWave d = new SoundWave(500, 0, 0.9, .5);
+        SoundWave e = new SoundWave(500, 0, 0.9, .5);
+        double result = e.similarity(d);
+        assertEquals(1.0, result, 0.0001);
+    }
+
+    @Test
+    public void testSimilarity2() {
+        SoundWave d = new SoundWave(500, 0, 0.9, .5);
+        SoundWave e = new SoundWave(500, 0, 0.9, .5);
+        double[] lchannel = {0.0, 0.0, 0.0};
+        double[] rchannel = {0.0, 0.0, 0.0};
+        SoundWave f = new SoundWave(lchannel, rchannel);
+        e.append(f);
+        double result = d.similarity(e);
+        assertEquals(1.0, result, 0.0001);
+    }
+
+    @Test
+    public void testGetBeta() {
+
     }
 
 
