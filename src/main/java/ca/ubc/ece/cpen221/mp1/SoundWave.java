@@ -424,19 +424,14 @@ public class SoundWave implements HasSimilarity<SoundWave> {
        for(int i=0; i<=this.lchannel.size()-other.lchannel.size(); i++){
            SoundWave scaled = new SoundWave(other.getLeftChannel(), other.getRightChannel());
 
-          /* if(other.lchannel.get(0) == 0 || other.rchannel.get(0) == 0) {
-               betal = this.betaZeroChecker(other);
-           }*/
-           //else{
-               betal = this.lchannel.get(i) / other.lchannel.get(0);
-               scaled.scale(betal);
-           //}
+           betal = this.betaZeroChecker(other, i);
+           scaled.scale(betal);
 
            for(int j=0; j < other.lchannel.size(); j++){
                double l = this.lchannel.get(i+j);
                double r = this.rchannel.get(i+j);
 
-               if (betal > 0 && l == (other.lchannel.get(j)) && r == (other.rchannel.get(j))) {
+               if (betal > 0 && l == (scaled.lchannel.get(j)) && r == (scaled.rchannel.get(j))) {
                    sum++;
                }
                 else {
@@ -451,7 +446,14 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         return false;
     }
 
-   /* private double betaZeroChecker(SoundWave other){
+
+
+    /**
+     * @param other other soundwave to check
+     * @param i the current itteration of our outer soundwave - is used if we don't need to find and zero exceptions.
+     * @return real beta value calculated using the first non-zero amplitudes found in L,R channels in two different waves
+     */
+    private double betaZeroChecker(SoundWave other, int i){
         double betal;
         int firstNonZeroIInner = 0;
         int firstNonZeroIOuter = 0;
@@ -463,26 +465,29 @@ public class SoundWave implements HasSimilarity<SoundWave> {
 
 
             for(int w = 0; w < this.lchannel.size(); w++){
-                for(int x=0;x< other.lchannel.size();x++) {
-                    if (other.rchannel.get(x) != 0) {
-                        firstNonZeroIInner = x;
-                        rvaloinner = true;
-                        sentinel = true;
-                        break;
-                    }
-                    else if (other.lchannel.get(x) != 0 || other.rchannel.get(x) != 0) {
-                        firstNonZeroIInner = x;
-                        lvalinner = true;
-                        sentinel = true;
-                        break;
+                if(!sentinel) {
+                    for (int x = 0; x < other.lchannel.size(); x++) {
+                        if (other.rchannel.get(x) != 0) {
+                            firstNonZeroIInner = x;
+                            rvaloinner = true;
+                            sentinel = true;
+                            break;
+                        } else if (other.lchannel.get(x) != 0 || other.rchannel.get(x) != 0) {
+                            firstNonZeroIInner = x;
+                            lvalinner = true;
+                            sentinel = true;
+                            break;
+                        }
                     }
                 }
+
                 if((this.rchannel.get(w) != 0) && sentinel) {
                     firstNonZeroIOuter = w;
                     rvalouter = true;
                     break;
                 }
-                else if((this.lchannel.get(w) != 0 && sentinel)) {
+
+                else if(this.lchannel.get(w) != 0 && sentinel) {
                     firstNonZeroIOuter = w;
                     lvalouter = true;
                     break;
@@ -494,14 +499,29 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                 return betal;
             }
             else {
-                // LISTEN UP
-                // Your options are as follows: create 4 if statements that cover all combinations of rchannel lchanne;
-                // and subsequently calculate beta using those values.
-                //                      OR
-                // figure out a simpler way of doing it and erase all this shit
+                if(rvalouter && rvaloinner) {
+                    betal = this.rchannel.get(firstNonZeroIOuter) / other.rchannel.get(firstNonZeroIInner);
+                    return betal;
+                }
+                else if(rvalouter && lvalinner) {
+                    betal = this.rchannel.get(firstNonZeroIOuter) / other.lchannel.get(firstNonZeroIInner);
+                    return betal;
+                }
+                else if(lvalouter && rvaloinner) {
+                    betal = this.lchannel.get(firstNonZeroIOuter) / other.rchannel.get(firstNonZeroIInner);
+                    return betal;
+                }
+                else if(lvalouter && lvalinner) {
+                    betal = this.lchannel.get(firstNonZeroIOuter) / other.lchannel.get(firstNonZeroIInner);
+                    return betal;
+                }
             }
 
-    }*/
+            betal = this.lchannel.get(i) / other.lchannel.get(0);
+            return  betal;
+
+    }
+
 
     /**
      * Determine the similarity between this wave and another wave.
