@@ -1,5 +1,6 @@
 package ca.ubc.ece.cpen221.mp1;
 
+import javazoom.jl.player.StdPlayer;
 import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -15,6 +16,40 @@ public class BasicTests {
         Assert.assertArrayEquals(lchannel, lchannel1, 0.00001);
         double[] rchannel1 = wave.getRightChannel();
         Assert.assertArrayEquals(rchannel, rchannel1, 0.00001);
+    }
+
+    @Test
+    public void testCreateWaveLLessR() {
+        double[] lchannel = {1.0, -1.0};
+        double[] rchannel = {1.0, -1.0, 2.0, 1.5};
+        SoundWave wave = new SoundWave(lchannel, rchannel);
+        double[] lchannelZ = {1.0, -1.0, 0.0, 0.0};
+        double[] rchannelZ = {1.0, -1.0, 2.0, 1.5};
+        SoundWave wavez = new SoundWave(lchannelZ, rchannelZ);
+
+        double[] lchannel1 = wave.getRightChannel();
+        double[] lchannelz = wavez.getRightChannel();
+        Assert.assertArrayEquals(lchannel1, lchannelz, 0.00001);
+        double[] rchannel1 = wave.getRightChannel();
+        double[] rchannelz = wavez.getRightChannel();
+        Assert.assertArrayEquals(rchannel1, rchannelz, 0.00001);
+    }
+
+    @Test
+    public void testCreateWaveRlessL() {
+        double[] lchannel = {1.0, -1.0, 1.0, 1, 1, 0};
+        double[] rchannel = {1.0, -1.0, 1.0, 1};
+        SoundWave wave = new SoundWave(lchannel, rchannel);
+        double[] lchannelZ = {1.0, -1.0, 1, 1, 1, 0};
+        double[] rchannelZ = {1.0, -1.0, 1, 1, 0, 0};
+        SoundWave wavez = new SoundWave(lchannelZ, rchannelZ);
+
+        double[] lchannel1 = wave.getRightChannel();
+        double[] lchannelz = wavez.getRightChannel();
+        Assert.assertArrayEquals(lchannel1, lchannelz, 0.00001);
+        double[] rchannel1 = wave.getRightChannel();
+        double[] rchannelz = wavez.getRightChannel();
+        Assert.assertArrayEquals(rchannel1, rchannelz, 0.00001);
     }
 
     @Test
@@ -35,10 +70,10 @@ public class BasicTests {
         double[] lchannel = {-1, -0.2, -0.3, -0.6, 0.4, -0.5, 0.6, 0.7, 0.8, 0.9, 1, -1};
         double[] rchannel = {0.2, 0.3, 0.5, 0.7, 0.10, 1, -1, -1, -1, -1, 0.8, 0.4};
         SoundWave outer = new SoundWave(lchannel, rchannel);
-        double[] lchannel2 = {-0.2, -0.3, -0.6, 0.4};
-        double[] rchannel2 = {0.3, 0.5, 0.7, 0.10};
+        double[] lchannel2 = {1, -1};
+        double[] rchannel2 = {0.8, 0.4};
         SoundWave inner = new SoundWave(lchannel2, rchannel2);
-
+        inner.scale(.2);
         boolean result = outer.contains(inner);
         assertEquals(true, result);
     }
@@ -70,7 +105,7 @@ public class BasicTests {
     }
 
     @Test
-    public void testContainsZerosWithNonZeros(){
+    public void testContainsZerosWithNonZerosRR(){
         double[] lchannel = {.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
         double[] rchannel = {.0, .0, .0, .0, 1, .0, .0, .0, .02, .0, .0, .0, .0, .0, .0, .0};
         SoundWave outer = new SoundWave(lchannel, rchannel);
@@ -83,6 +118,47 @@ public class BasicTests {
         assertEquals(true, result);
     }
 
+    @Test
+    public void testContainsZerosWithNonZerosLL(){
+        double[] lchannel = {.0, .0, .0, .0, 1.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
+        double[] rchannel = {.0, .0, .0, .0, 0.0, .0, .0, .0, .02, .0, .0, .0, .0, .0, .0, .0};
+        SoundWave outer = new SoundWave(lchannel, rchannel);
+        double[] lchannel2 = {.0, 1, .0, .0, .0, .0};
+        double[] rchannel2 = {.0, 0, .0, .0, .0, .02};
+        SoundWave inner = new SoundWave(lchannel2, rchannel2);
+
+        inner.scale(0.6);
+        boolean result = outer.contains(inner);
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void testContainsZerosWithAllZeros(){
+        double[] lchannel = {.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
+        double[] rchannel = {.0, .0, .0, .0, 0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
+        SoundWave outer = new SoundWave(lchannel, rchannel);
+        double[] lchannel2 = {.0, .0, .0, .0, .0, .0};
+        double[] rchannel2 = {.0, 0, .0, .0, .0, .0};
+        SoundWave inner = new SoundWave(lchannel2, rchannel2);
+
+        inner.scale(0.6);
+        boolean result = outer.contains(inner);
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void latePlusWave() {
+        boolean answer;
+        SoundWave sw = new SoundWave(280, 0, 1, 2);
+        SoundWave fw = new SoundWave(543, 0, 1, 0.2);
+
+        sw.add(fw);
+        answer = sw.contains(fw);
+
+        assertEquals(true, answer);
+        StdPlayer.close();
+    }
+    @Test
     public void testEcho() {
         double[] lchannelo = {1.0, 1.5, -1, 0.75, 0.86};
         double[] rchannelo = {3.5, 6.7, 1, 0.5, -0.9};
@@ -187,7 +263,7 @@ public class BasicTests {
         merge = merge.add(f);
         merge = merge.add(g);
         double frequency = merge.highAmplitudeFreqComponent();
-        assertEquals(300, frequency, 1);
+        assertEquals(500, frequency, 1);
     }
 
     @Test
