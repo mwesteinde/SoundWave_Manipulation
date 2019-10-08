@@ -434,7 +434,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @return real beta value calculated using the first non-zero
      * amplitudes found in L,R channels in two different waves
      */
-    private double betaZeroChecker(SoundWave other, int i) {
+    private double betaZeroChecker(SoundWave other, int i){
         double betal;
         int firstNonZeroIInner = 0;
         int firstNonZeroIOuter = 0;
@@ -445,40 +445,41 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         boolean lvalinner = false;
 
 
-
-            for (int w = i; w < this.lchannel.size(); w++) {
-                if (!sentinel) {
-                    for (int x = 0; x < other.lchannel.size(); x++) {
-                        if (other.rchannel.get(x) != 0) {
-                            firstNonZeroIInner = x;
-                            rvaloinner = true;
-                            sentinel = true;
-                            break;
-                        } else if (other.lchannel.get(x) != 0) {
-                            firstNonZeroIInner = x;
-                            lvalinner = true;
-                            sentinel = true;
-                            break;
-                        }
+        for(int w = i; w < this.lchannel.size(); w++){
+            if(!sentinel) {
+                for (int x = 0; x < other.lchannel.size(); x++) {
+                    if (other.rchannel.get(x) != 0) {
+                        firstNonZeroIInner = x;
+                        rvaloinner = true;
+                        sentinel = true;
+                        break;
+                    } else if (other.lchannel.get(x) != 0) {
+                        firstNonZeroIInner = x;
+                        lvalinner = true;
+                        sentinel = true;
+                        break;
                     }
                 }
             }
 
-            if ((this.rchannel.get(w) != 0) && sentinel) {
+            if((this.rchannel.get(w) != 0) && sentinel) {
                 firstNonZeroIOuter = w;
                 rvalouter = true;
                 break;
-            } else if (this.lchannel.get(w) != 0 && sentinel) {
+            }
+
+            else if(this.lchannel.get(w) != 0 && sentinel) {
                 firstNonZeroIOuter = w;
                 lvalouter = true;
                 break;
             }
 
         }
-        if (rvalouter && rvaloinner) {
+        if(rvalouter && rvaloinner) {
             betal = this.rchannel.get(firstNonZeroIOuter) / other.rchannel.get(firstNonZeroIInner);
             return betal;
-        } else if (lvalouter && lvalinner) {
+        }
+        else if(lvalouter && lvalinner) {
             betal = this.lchannel.get(firstNonZeroIOuter) / other.lchannel.get(firstNonZeroIInner);
             return betal;
         }
@@ -486,6 +487,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         betal = 1.0;
         return  betal;
     }
+
 
 
     /**
