@@ -425,7 +425,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      */
     public boolean contains(SoundWave other) {
 
-       double betal;
+       double betal,lround, rround;
        int sum = 0;
 
        for(int i=0; i<=this.lchannel.size()-other.lchannel.size(); i++){
@@ -443,8 +443,10 @@ public class SoundWave implements HasSimilarity<SoundWave> {
            for(int j=0; j < other.lchannel.size(); j++){
                double l = this.lchannel.get(i+j);
                double r = this.rchannel.get(i+j);
+               lround = Math.round(scaled.lchannel.get(j) * 1000000d)/1000000d;
+               rround = Math.round(scaled.rchannel.get(j)*1000000d)/1000000d;
 
-               if (betal > 0 && l == (scaled.lchannel.get(j)) && r == (scaled.rchannel.get(j))) {
+               if (betal > 0 && l == lround && r == rround) {
                    sum++;
                }
                 else {
@@ -548,6 +550,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                 this.rchannel.add(0.0);
             }
         }
+
         beta = this.getBeta(other);
         for (int i = 0; i < this.lchannel.size(); i++) {
             a = Math.pow((this.lchannel.get(i) - beta * other.lchannel.get(i)), 2) +
