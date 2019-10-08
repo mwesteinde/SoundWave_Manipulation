@@ -133,8 +133,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
     /**
      * Append a wave to this wave.
      *
-     * @param lchannel left channel double array to be converted to arraylist
-     * @param rchannel right channel double array to be converted to arraylist
+     * @param leftchannel left channel double array to be converted to arraylist
+     * @param rightchannel right channel double array to be converted to arraylist
      */
 
     private void append(double[] leftchannel, double[] rightchannel) {
