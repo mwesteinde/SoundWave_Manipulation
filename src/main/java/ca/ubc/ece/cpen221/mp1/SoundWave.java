@@ -234,8 +234,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         SoundWave echo = new SoundWave();
         double echoleft;
         double echoright;
-        ArrayList echolchannel = new ArrayList<>();
-        ArrayList echorchannel = new ArrayList<>();
 
         for (int i = 0; i < this.lchannel.size(); i++) {
             if (i < delta) {
@@ -354,7 +352,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
             if (magnitudel >= (max)){
                 if (j *(SAMPLES_PER_SECOND/(this.lchannel.size())) < NYQUIST_LIMIT) {
                     max = magnitudel;
-                    indexmax = j;
                     maxes.add(j);
                 }
                 else {
@@ -364,7 +361,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
             if (magnituder >= (max)){
                 if (j *(SAMPLES_PER_SECOND/(this.lchannel.size())) < NYQUIST_LIMIT) {
                     max = magnituder;
-                    indexmax = j;
                     maxes.add(j);
                 }
                 else {
@@ -387,7 +383,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      */
     public boolean contains(SoundWave other) {
 
-       double betal,lround, rround;
+       double betal, lround, rround;
        int sum = 0;
 
        for(int i=0; i<=this.lchannel.size()-other.lchannel.size(); i++){
@@ -401,7 +397,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                betal = this.betaZeroChecker(other, i);
                scaled.scale(betal);
            }
-
            for(int j=0; j < other.lchannel.size(); j++){
                double l = this.lchannel.get(i+j);
                double r = this.rchannel.get(i+j);
@@ -551,7 +546,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * Not needed in testing line coverage.
      */
     private void sendToStereoSpeaker() {
-        // You may not need to change this...
         double[] lchannel = this.lchannel.stream().mapToDouble(x -> x.doubleValue()).toArray();
         double[] rchannel = this.rchannel.stream().mapToDouble(x -> x.doubleValue()).toArray();
         StdPlayer.playWave(lchannel, rchannel);

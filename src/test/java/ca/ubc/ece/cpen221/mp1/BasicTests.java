@@ -280,8 +280,7 @@ public class BasicTests {
     public void testHighAmplitudeFreqComponent2() {
         SoundWave a = new SoundWave(23, 0, 0.2, .5);
         SoundWave b = new SoundWave(100, 0, 0.21, .5);
-        SoundWave merge = new SoundWave();
-        merge = b.add(a);
+        SoundWave merge = b.add(a);
 
         double frequency = merge.highAmplitudeFreqComponent();
         assertEquals(100, frequency, 1);
@@ -395,13 +394,4 @@ public class BasicTests {
 
         assertEquals(0.551463, result1, 0.0001);
     }
-
-   // @Test
-   // public void testGetBeta() {
-  //      double[] lchannelo1 = {};
-   //     double[];
-  //  }
-
-
-
 }
