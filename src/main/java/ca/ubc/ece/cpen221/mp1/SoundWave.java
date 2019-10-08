@@ -496,7 +496,8 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * instantaneous differences.
      *
      * @param other is not null. Other and this have equal length left and right channels.
-     * @return the similarity between this wave and other.
+     * @return the similarity between this wave and other. If there is an empty wave, returns
+     * 0 and if both are empty, returns 1.
      */
     public double similarity(SoundWave other) {
         double gamma;
