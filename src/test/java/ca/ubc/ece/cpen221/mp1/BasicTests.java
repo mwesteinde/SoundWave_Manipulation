@@ -421,6 +421,19 @@ public class BasicTests {
     }
 
     @Test
+    public void testSimilarity7() {
+        double[] lchannelo1 = {0.0, 0.0, 0.0};
+        double[] rchannelo1 = {0.0, 0.0, 0.0};
+        double[] lchannelo2 = {0.0, 0.0, 0.0};
+        double[] rchannelo2 = {0.0, 0.0, 0.0};
+        SoundWave d = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave e = new SoundWave(lchannelo2,rchannelo2);
+        double result1 = e.similarity(d);
+
+        assertEquals(1, result1, 0.001);
+    }
+
+    @Test
     public void testGetBeta() {
         double[] lchannelo1 = {.06, -0.3, 0.79};
         double[] rchannelo1 = {0.05, 0.76, 0.1};

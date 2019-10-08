@@ -544,6 +544,10 @@ public class SoundWave implements HasSimilarity<SoundWave> {
             return 0;
         }
 
+        if (allzerosother && allzerosthis) {
+            return 1;
+        }
+
         beta = this.getBeta(other);
         for (int i = 0; i < this.lchannel.size(); i++) {
             a = Math.pow((this.lchannel.get(i) - beta * other.lchannel.get(i)), 2)
