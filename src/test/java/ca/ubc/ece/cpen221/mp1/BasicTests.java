@@ -300,6 +300,18 @@ public class BasicTests {
 
     }
 
+    @Test
+    public void testHighAmplitudeFreqComponent4(){
+        SoundWave w1 = new SoundWave(201,0,0.6,.02);
+        SoundWave w2 = new SoundWave(1552,0,0.4,.02);
+
+        SoundWave w4 = (w1).add(w2);
+
+        double a = w4.highAmplitudeFreqComponent();
+        assertEquals(200, a, 1);
+
+    }
+
     /** Complex number implementation test **/
     @Test
     public void testMagnitude() {
@@ -393,6 +405,19 @@ public class BasicTests {
         double result1 = e.similarity(d);
 
         assertEquals(0.7094295, result1, 0.001);
+    }
+
+    @Test
+    public void testSimilarity6() {
+        double[] lchannelo1 = {0.0, 0.0, 0.0};
+        double[] rchannelo1 = {0.0, 0.0, 0.0};
+        double[] lchannelo2 = {.06, -0.6, 0.79};
+        double[] rchannelo2 = {0.25, 0.36, 0.5};
+        SoundWave d = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave e = new SoundWave(lchannelo2,rchannelo2);
+        double result1 = e.similarity(d);
+
+        assertEquals(0, result1, 0.001);
     }
 
     @Test
