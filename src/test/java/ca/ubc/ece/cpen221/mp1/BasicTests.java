@@ -66,9 +66,23 @@ public class BasicTests {
     }
 
     @Test
+    public void testContainsIllegalWaveLargeScale(){
+        double[] lchannel = {0.0, 0.2, 0.0, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.9, 1.0};
+        double[] rchannel = {0.0, 0.6, 0.0, 0.2, 0.8, 0.1, 0.1, 1 ,-0.4, 0.6, -0.9, -0.6, 0.9, -1};
+        SoundWave outer = new SoundWave(lchannel, rchannel);
+        double[] lchannel2 = {0.0, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.9};
+        double[] rchannel2 = {0.0, 0.2, 0.8, 0.1, 0.1, 1 ,-0.4, 0.6, -0.9, -0.6, 0.9};
+        SoundWave inner = new SoundWave(lchannel2, rchannel2);
+        inner.scale(1.5);
+
+        boolean result = outer.contains(inner);
+        assertEquals(false, result);
+    }
+
+    @Test
     public void testContainsWithDiffLRTrue(){
-        double[] lchannel = {-1, -0.2, -0.3, -0.6, 0.4, -0.5, 0.6, 0.7, 0.8, 0.9, 1, -1};
-        double[] rchannel = {0.2, 0.3, 0.5, 0.7, 0.10, 1, -1, -1, -1, -1, 0.8, 0.4};
+        double[] lchannel = { 0.7, 0.8, 0.9, 1, -1};
+        double[] rchannel = {-1, -1, -1, 0.8, 0.4};
         SoundWave outer = new SoundWave(lchannel, rchannel);
         double[] lchannel2 = {1, -1};
         double[] rchannel2 = {0.8, 0.4};
@@ -146,18 +160,6 @@ public class BasicTests {
         assertEquals(true, result);
     }
 
-    @Test
-    public void latePlusWave() {
-        boolean answer;
-        SoundWave sw = new SoundWave(280, 0, 1, 2);
-        SoundWave fw = new SoundWave(543, 0, 1, 0.2);
-
-        sw.add(fw);
-        answer = sw.contains(fw);
-
-        assertEquals(true, answer);
-        StdPlayer.close();
-    }
     @Test
     public void testEcho() {
         double[] lchannelo = {1.0, 1.5, -1, 0.75, 0.86};
@@ -275,6 +277,7 @@ public class BasicTests {
 
         double a = w4.highAmplitudeFreqComponent();
         assertEquals(5000, a, 1);
+
     }
 
 
@@ -308,7 +311,7 @@ public class BasicTests {
     @Test
     public void testSimilarity1() {
         SoundWave d = new SoundWave(500, 0, 0.9, .5);
-        SoundWave e = new SoundWave(500, 0, 0.9, .5);
+        SoundWave e = new SoundWave(500, 0, 0.1, .5);
         double result = e.similarity(d);
         assertEquals(1.0, result, 0.0001);
     }
@@ -317,8 +320,8 @@ public class BasicTests {
     public void testSimilarity2() {
         SoundWave d = new SoundWave(500, 0, 0.9, .5);
         SoundWave e = new SoundWave(500, 0, 0.9, .5);
-        double[] lchannel = {0.0, 0.0, 0.0};
-        double[] rchannel = {0.0, 0.0, 0.0};
+        double[] lchannel = {0, 0.0, 0.0};
+        double[] rchannel = {0, 0.0, 0.0};
         SoundWave f = new SoundWave(lchannel, rchannel);
         e.append(f);
         double result = d.similarity(e);
