@@ -544,7 +544,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         return gamma;
     }
 
-    private double getBeta(SoundWave other) {
+    public double getBeta(SoundWave other) {
         //this is w1, other is w2
         double c, a, beta;
         double csum = 0;
