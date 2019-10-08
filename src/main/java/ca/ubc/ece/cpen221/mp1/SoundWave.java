@@ -333,7 +333,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
         double l;
         double r;
 
-        for(int i = 0; i < this.lchannel.size()/2; i++){
+        for(int i = 0; i < this.lchannel.size(); i++){
             if(i == 0){
                 filtered.lchannel.add((this.lchannel.get(i)));
                 filtered.rchannel.add((this.rchannel.get(i)));
@@ -369,7 +369,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
             ComplexNumber rtotc = new ComplexNumber(0.0, 0.0);
 
             for (int i = 0; i < this.lchannel.size(); i++) {
-                bval = ((2*Math.PI*i*j)/(this.lchannel.size()));
+                bval = (2*Math.PI*i*j)/(this.lchannel.size());
 
                 reall = this.lchannel.get(i) * Math.cos(bval);
                 imagl = this.lchannel.get(i) * Math.sin(bval);
@@ -391,7 +391,6 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                     indexmax = j;
                     maxes.add(j);
                 }
-
                 else {
                     break;
                 }
@@ -406,12 +405,9 @@ public class SoundWave implements HasSimilarity<SoundWave> {
                     break;
                 }
             }
-
-
         }
         indexmax = Collections.max(maxes);
-
-        freqmax = indexmax*(SAMPLES_PER_SECOND/(this.lchannel.size()));
+        freqmax = indexmax*(SAMPLES_PER_SECOND/((this.lchannel.size())));
         return freqmax;
     }
 
@@ -526,7 +522,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * The similarity metric, gamma, is the sum of squares of
      * instantaneous differences.
      *
-     * @param other is not null.
+     * @param other is not null. Other and this have equal length left and right channels.
      * @return the similarity between this wave and other.
      */
     public double similarity(SoundWave other) {

@@ -22,16 +22,14 @@ public class ComplexNumber {
         double nrval = C1.rval + this.rval;
         double nival = C1.ival + this.ival;
 
-        ComplexNumber result = new ComplexNumber(nrval, nival);
-        return result;
+        return new ComplexNumber(nrval, nival);
     }
 
     /**
      * @return the magnitude of the real and imaginary components together.
      */
     public double Magnitude(){
-        double result = Math.sqrt(Math.pow(this.ival, 2) + Math.pow(this.rval, 2));
-        return result;
+        return Math.sqrt(Math.pow(this.ival, 2) + Math.pow(this.rval, 2));
     }
 
 }

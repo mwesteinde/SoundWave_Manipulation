@@ -249,22 +249,34 @@ public class BasicTests {
     @Test
     public void testHighAmplitudeFreqComponent1() {
         SoundWave a = new SoundWave(200, 0, .5, .5);
-        SoundWave b = new SoundWave(758, 0, 0.5, .5);
-        SoundWave d = new SoundWave(500, 0, 0.9, .5);
-        SoundWave c = new SoundWave(100, 0, 0.5, .5);
-        SoundWave e = new SoundWave(80, 0, 0.5, .5);
-        SoundWave f = new SoundWave(90, 0, 0.7, .5);
-        SoundWave g = new SoundWave(50, 0, 0.89, .5);
-        SoundWave merge = new SoundWave();
-        /**merge = a.add(b);
-         merge = merge.add(c);*/
-        merge = merge.add(d);
-        merge = merge.add(e);
-        merge = merge.add(f);
-        merge = merge.add(g);
-        double frequency = merge.highAmplitudeFreqComponent();
-        assertEquals(500, frequency, 1);
+        double frequency = a.highAmplitudeFreqComponent();
+        assertEquals(200, frequency, 1);
     }
+
+
+    @Test
+    public void testHighAmplitudeFreqComponent2() {
+        SoundWave a = new SoundWave(23, 0, 0.4, .5);
+        SoundWave b = new SoundWave(100, 0, 0.5, .5);
+        SoundWave merge = new SoundWave();
+        merge = a.add(b);
+
+        double frequency = merge.highAmplitudeFreqComponent();
+        assertEquals(100, frequency, 1);
+    }
+
+    @Test
+    public void testHighAmplitudeFreqComponent3(){
+        SoundWave w1 = new SoundWave(5000,0,0.2,0.33);
+        SoundWave w2 = new SoundWave(500,0,0.19,0.33);
+        SoundWave w3 = new SoundWave(2000,0,0.19,0.33);
+
+        SoundWave w4 = w3.add(w1).add(w2);
+
+        double a = w4.highAmplitudeFreqComponent();
+        assertEquals(5000, a, 1);
+    }
+
 
     @Test
     public void testMagnitude() {
@@ -272,7 +284,7 @@ public class BasicTests {
         double r = 85.6;
         ComplexNumber test = new ComplexNumber(r, i);
         double result = test.Magnitude();
-        assertEquals(result, 6575.15722, 0.1);
+        assertEquals(result, 6575.15722, 0.0001);
     }
 
     @Test
@@ -289,8 +301,8 @@ public class BasicTests {
         ComplexNumber result = new ComplexNumber(resulti, resultr);
         ComplexNumber actual = test1.Sum(test2);
 
-        assertEquals(actual.ival, resulti, 0.01);
-        assertEquals(actual.rval, resultr, 0.01);
+        assertEquals(actual.ival, resulti, 0.00000000000001);
+        assertEquals(actual.rval, resultr, 0.00000000000001);
     }
 
     @Test
@@ -314,8 +326,51 @@ public class BasicTests {
     }
 
     @Test
-    public void testGetBeta() {
+    public void testSimilarity3() {
+        double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
+        double[] rchannelo1 = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.02};
+        double[] lchannelresult = {.06, -0.6, 0.79, 1, -1, -.001, 0};
+        double[] rchannelresult = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.02};
+        SoundWave d = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave e = new SoundWave(lchannelresult,rchannelresult);
+        double result = e.similarity(d);
+        assertEquals(1.0, result, 0.0001);
+    }
 
+    @Test
+    public void testSimilarity4() {
+        double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
+        double[] rchannelo1 = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.02};
+        double[] lchannelo2 = {.06, -0.6, 0.79, 1, -1, -.001, 0.1};
+        double[] rchannelo2 = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.03};
+        double[] lchannelo3 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
+        double[] rchannelo3 = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.09};
+        SoundWave d = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave e = new SoundWave(lchannelo2,rchannelo2);
+        SoundWave f = new SoundWave(lchannelo3,rchannelo3);
+        double result1 = e.similarity(d);
+        double result2 = e.similarity(f);
+
+        assertEquals((result1 > result2), true);
+    }
+
+    @Test
+    public void testSimilarity5() {
+        double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
+        double[] rchannelo1 = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.02};
+        double[] lchannelo2 = {.06, -0.6, 0.79, 1, -1, -.001, 0.1};
+        double[] rchannelo2 = {0.25, 0.36, 0.5, -0.06, 0.6, .2, -0.03};
+        SoundWave d = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave e = new SoundWave(lchannelo2,rchannelo2);
+        double result1 = e.similarity(d);
+
+        assertEquals(0.551463, result1, 0.0001);
+    }
+
+    @Test
+    public void testGetBeta() {
+        double[] lchannelo1 = {};
+        double[]
     }
 
 
