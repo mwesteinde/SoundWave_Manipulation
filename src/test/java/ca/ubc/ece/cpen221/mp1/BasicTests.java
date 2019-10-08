@@ -1,12 +1,14 @@
 package ca.ubc.ece.cpen221.mp1;
 
-import javazoom.jl.player.StdPlayer;
+
 import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.Assert.*;
 
 public class BasicTests {
 
+    /**  creates a wave and ensures it is correctly initialized **/
     @Test
     public void testCreateWave() {
         double[] lchannel = {1.0, -1.0};
@@ -18,6 +20,7 @@ public class BasicTests {
         Assert.assertArrayEquals(rchannel, rchannel1, 0.00001);
     }
 
+    /** tests our append zeros to make L and R equal lengths **/
     @Test
     public void testCreateWaveLLessR() {
         double[] lchannel = {1.0, -1.0};
@@ -35,6 +38,7 @@ public class BasicTests {
         Assert.assertArrayEquals(rchannel1, rchannelz, 0.00001);
     }
 
+    /** tests our append zeros to make L and R equal lengths **/
     @Test
     public void testCreateWaveRlessL() {
         double[] lchannel = {1.0, -1.0, 1.0, 1, 1, 0};
@@ -52,6 +56,7 @@ public class BasicTests {
         Assert.assertArrayEquals(rchannel1, rchannelz, 0.00001);
     }
 
+    /** tests the edge case of dividing by zero for finding beta in our contains function **/
     @Test
     public void testContainsWithZeroBoundary(){
         double[] lchannel = {0.0, 0.2, 0.0, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.9, 1.0};
@@ -62,9 +67,11 @@ public class BasicTests {
         SoundWave inner = new SoundWave(lchannel2, rchannel2);
 
         boolean result = outer.contains(inner);
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
+    /** tests the edge case of scaling a wave past 1, -1 -
+     * our trimming should result in the wave no linger being contained **/
     @Test
     public void testContainsIllegalWaveLargeScale(){
         double[] lchannel = {0.0, 0.2, 0.0, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.9, 1.0};
@@ -76,9 +83,10 @@ public class BasicTests {
         inner.scale(1.5);
 
         boolean result = outer.contains(inner);
-        assertEquals(false, result);
+        assertFalse(result);
     }
 
+    /** tests arbitrary scaling factor for contained wave **/
     @Test
     public void testContainsWithDiffLRTrue(){
         double[] lchannel = { 0.7, 0.8, 0.9, 1, -1};
@@ -89,9 +97,10 @@ public class BasicTests {
         SoundWave inner = new SoundWave(lchannel2, rchannel2);
         inner.scale(.2);
         boolean result = outer.contains(inner);
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
+    /** tests wave not contained in outer **/
     @Test
     public void testContainsContainsWithDiffLRFalse(){
         double[] lchannel = {-1, -0.2, -0.3, -0.6, 0.4, -0.5, 0.6, 0.7, 0.8, 0.9, 1, -1};
@@ -102,9 +111,10 @@ public class BasicTests {
         SoundWave inner = new SoundWave(lchannel2, rchannel2);
 
         boolean result = outer.contains(inner);
-        assertEquals(false, result);
+        assertFalse(result);
     }
 
+    /** tests false answer with weird zero cases **/
     @Test
     public void testContainsJustFalse(){
         double[] lchannel = {.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
@@ -115,9 +125,10 @@ public class BasicTests {
         SoundWave inner = new SoundWave(lchannel2, rchannel2);
 
         boolean result = outer.contains(inner);
-        assertEquals(false, result);
+        assertFalse(result);
     }
 
+    /** tests finding first non zero values to scale wave in right channels **/
     @Test
     public void testContainsZerosWithNonZerosRR(){
         double[] lchannel = {.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
@@ -129,9 +140,10 @@ public class BasicTests {
 
         inner.scale(0.6);
         boolean result = outer.contains(inner);
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
+    /** tests finding first non zero values to scale wave in left channels **/
     @Test
     public void testContainsZerosWithNonZerosLL(){
         double[] lchannel = {.0, .0, .0, .0, 1.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
@@ -143,9 +155,10 @@ public class BasicTests {
 
         inner.scale(0.6);
         boolean result = outer.contains(inner);
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
+    /** all zeros fringe case **/
     @Test
     public void testContainsZerosWithAllZeros(){
         double[] lchannel = {.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0};
@@ -157,9 +170,10 @@ public class BasicTests {
 
         inner.scale(0.6);
         boolean result = outer.contains(inner);
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
+    /** tests echo **/
     @Test
     public void testEcho() {
         double[] lchannelo = {1.0, 1.5, -1, 0.75, 0.86};
@@ -172,6 +186,7 @@ public class BasicTests {
         Assert.assertArrayEquals(rchannele, testecho.getRightChannel(), 0.00001);
     }
 
+    /** Adds a whole ton of waves together with trimming generates output **/
     @Test
     public void testAdd() {
         double[] lchannelo1 = {1.0, 56.0, 0.05, 0.5, -0.5, -1, 0.6};
@@ -193,6 +208,7 @@ public class BasicTests {
         Assert.assertArrayEquals(rchannelresult, rchannelfinal, 0.00001);
     }
 
+    /** tests append **/
     @Test
     public void testAppend() {
         double[] lchannelo1 = {1.0, 56.0, 0.05, 0.5, -0.5, -1, 0.6};
@@ -212,6 +228,7 @@ public class BasicTests {
         Assert.assertArrayEquals(a.getRightChannel(), rchannelresult, 0.00001);
     }
 
+    /** tests scaling with arbitrary val **/
     @Test
     public void testScale1() {
         double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
@@ -224,6 +241,7 @@ public class BasicTests {
         Assert.assertArrayEquals(a.getRightChannel(), rchannelresult, 0.00001);
     }
 
+    /** tests scaling with arbitrary val **/
     @Test
     public void testScale2() {
         double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
@@ -236,6 +254,7 @@ public class BasicTests {
         Assert.assertArrayEquals(a.getRightChannel(), rchannelresult, 0.00001);
     }
 
+    /** tests filter **/
     @Test
     public void testHighPassFilter() {
         double[] lchannelo1 = {0.03, -0.3, 0.395, 0.5, -0.5, -0.0005, 0};
@@ -248,6 +267,7 @@ public class BasicTests {
         Assert.assertArrayEquals(rchannelresult, b.getRightChannel(), 0.00001);
     }
 
+    /** basic DFT test of one wave **/
     @Test
     public void testHighAmplitudeFreqComponent1() {
         SoundWave a = new SoundWave(200, 0, .5, .5);
@@ -255,18 +275,19 @@ public class BasicTests {
         assertEquals(200, frequency, 1);
     }
 
-
+    /** Testing DFT with tight amplitude diff tolerances**/
     @Test
     public void testHighAmplitudeFreqComponent2() {
-        SoundWave a = new SoundWave(23, 0, 0.4, .5);
-        SoundWave b = new SoundWave(100, 0, 0.5, .5);
+        SoundWave a = new SoundWave(23, 0, 0.2, .5);
+        SoundWave b = new SoundWave(100, 0, 0.21, .5);
         SoundWave merge = new SoundWave();
-        merge = a.add(b);
+        merge = b.add(a);
 
         double frequency = merge.highAmplitudeFreqComponent();
         assertEquals(100, frequency, 1);
     }
 
+    /** Tight tolerance dft 3 waves **/
     @Test
     public void testHighAmplitudeFreqComponent3(){
         SoundWave w1 = new SoundWave(5000,0,0.2,0.33);
@@ -280,7 +301,7 @@ public class BasicTests {
 
     }
 
-
+    /** Complex number implementation test **/
     @Test
     public void testMagnitude() {
         double i = 6574.6;
@@ -290,6 +311,7 @@ public class BasicTests {
         assertEquals(result, 6575.15722, 0.0001);
     }
 
+    /** Complex number implementation test **/
     @Test
     public void testSum() {
         double i1 = 6574.6;
@@ -301,13 +323,13 @@ public class BasicTests {
 
         ComplexNumber test1 = new ComplexNumber(r1, i1);
         ComplexNumber test2 = new ComplexNumber(r2, i2);
-        ComplexNumber result = new ComplexNumber(resulti, resultr);
         ComplexNumber actual = test1.Sum(test2);
 
         assertEquals(actual.ival, resulti, 0.00000000000001);
         assertEquals(actual.rval, resultr, 0.00000000000001);
     }
 
+    /** Checks exactly equal waves with diff amplitudes to check beta calculations **/
     @Test
     public void testSimilarity1() {
         SoundWave d = new SoundWave(500, 0, 0.9, .5);
@@ -316,6 +338,7 @@ public class BasicTests {
         assertEquals(1.0, result, 0.0001);
     }
 
+    /** ensures extra zero values do not impact calculation **/
     @Test
     public void testSimilarity2() {
         SoundWave d = new SoundWave(500, 0, 0.9, .5);
@@ -328,6 +351,7 @@ public class BasicTests {
         assertEquals(1.0, result, 0.0001);
     }
 
+    /** hodgepodge of waves with pre-calced gamma **/
     @Test
     public void testSimilarity3() {
         double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
@@ -340,6 +364,7 @@ public class BasicTests {
         assertEquals(1.0, result, 0.0001);
     }
 
+    /** hodgepodge of waves with pre-calced gamma one similarity should be greater than the other **/
     @Test
     public void testSimilarity4() {
         double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
@@ -354,9 +379,10 @@ public class BasicTests {
         double result1 = e.similarity(d);
         double result2 = e.similarity(f);
 
-        assertEquals((result1 > result2), true);
+        assertTrue((result1 > result2));
     }
 
+    /** hodgepodge of waves with pre-calced gamma **/
     @Test
     public void testSimilarity5() {
         double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
@@ -370,11 +396,11 @@ public class BasicTests {
         assertEquals(0.551463, result1, 0.0001);
     }
 
-    @Test
-    public void testGetBeta() {
-        double[] lchannelo1 = {};
-        double[]
-    }
+   // @Test
+   // public void testGetBeta() {
+  //      double[] lchannelo1 = {};
+   //     double[];
+  //  }
 
 
 
