@@ -164,8 +164,8 @@ public class BasicTests {
     public void testEcho() {
         double[] lchannelo = {1.0, 1.5, -1, 0.75, 0.86};
         double[] rchannelo = {3.5, 6.7, 1, 0.5, -0.9};
-        double[] lchannele = {1.0, 1.0, -.5, 1.0, 0.36};
-        double[] rchannele = {1.0, 1.0, 1.0, 1.0, -0.4};
+        double[] lchannele = {1.0, 1.0, -.5, 1.0, 0.36, 0.375, 0.43};
+        double[] rchannele = {1.0, 1.0, 1.0, 1.0, -0.4, 0.25, -.45};
         SoundWave wave = new SoundWave(lchannelo, rchannelo);
         SoundWave testecho = wave.addEcho(2, 0.5);
         Assert.assertArrayEquals(lchannele, testecho.getLeftChannel(), 0.00001);
@@ -269,14 +269,14 @@ public class BasicTests {
 
     @Test
     public void testHighAmplitudeFreqComponent3(){
-        SoundWave w1 = new SoundWave(5000,0,0.2,0.33);
-        SoundWave w2 = new SoundWave(500,0,0.19,0.33);
-        SoundWave w3 = new SoundWave(2000,0,0.19,0.33);
+        SoundWave w1 = new SoundWave(40,0,0.2,.33);
+        SoundWave w2 = new SoundWave(60,0,0.2,.33);
+        SoundWave w3 = new SoundWave(20,0,0.2,.33);
 
         SoundWave w4 = w3.add(w1).add(w2);
 
         double a = w4.highAmplitudeFreqComponent();
-        assertEquals(5000, a, 1);
+        assertEquals(60, a, 1);
 
     }
 
@@ -359,23 +359,29 @@ public class BasicTests {
 
     @Test
     public void testSimilarity5() {
-        double[] lchannelo1 = {.06, -0.6, 0.79, 1, -1, -.001, 0};
-        double[] rchannelo1 = {0.05, 0.76, 0.1, -0.02, 0.5, 1, -0.02};
-        double[] lchannelo2 = {.06, -0.6, 0.79, 1, -1, -.001, 0.1};
-        double[] rchannelo2 = {0.25, 0.36, 0.5, -0.06, 0.6, .2, -0.03};
+        double[] lchannelo1 = {.06, -0.3, 0.79};
+        double[] rchannelo1 = {0.05, 0.76, 0.1};
+        double[] lchannelo2 = {.06, -0.6, 0.79};
+        double[] rchannelo2 = {0.25, 0.36, 0.5};
         SoundWave d = new SoundWave(lchannelo1, rchannelo1);
         SoundWave e = new SoundWave(lchannelo2,rchannelo2);
         double result1 = e.similarity(d);
 
-        assertEquals(0.551463, result1, 0.0001);
+        assertEquals(0.7094295, result1, 0.001);
     }
 
     @Test
     public void testGetBeta() {
-        double[] lchannelo1 = {};
-        double[]
-    }
+        double[] lchannelo1 = {.06, -0.3, 0.79};
+        double[] rchannelo1 = {0.05, 0.76, 0.1};
+        double[] lchannelo2 = {.06, -0.6, 0.79};
+        double[] rchannelo2 = {0.25, 0.36, 0.5};
+        SoundWave d = new SoundWave(lchannelo1, rchannelo1);
+        SoundWave e = new SoundWave(lchannelo2,rchannelo2);
+        double result1 = d.getBeta(e);
 
+        assertEquals(0.79997202, result1, 0.0001);
+    }
 
 
 }
