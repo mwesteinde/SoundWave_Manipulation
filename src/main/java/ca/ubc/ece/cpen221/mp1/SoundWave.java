@@ -137,7 +137,7 @@ public class SoundWave implements HasSimilarity<SoundWave> {
      * @param rightchannel right channel double array to be converted to arraylist
      */
 
-    private void append(double[] leftchannel, double[] rightchannel) {
+    public void append(double[] leftchannel, double[] rightchannel) {
         for (int i = 0; i < leftchannel.length; i++) {
             this.lchannel.add(leftchannel[i]);
             this.rchannel.add(rightchannel[i]);
